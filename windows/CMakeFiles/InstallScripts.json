@@ -1,0 +1,13 @@
+{
+	"InstallScripts" : 
+	[
+		"D:/fungibite/fungibite_kasir/windows/cmake_install.cmake",
+		"D:/fungibite/fungibite_kasir/windows/flutter/cmake_install.cmake",
+		"D:/fungibite/fungibite_kasir/windows/runner/cmake_install.cmake",
+		"D:/fungibite/fungibite_kasir/windows/plugins/cloud_firestore/cmake_install.cmake",
+		"D:/fungibite/fungibite_kasir/windows/plugins/firebase_auth/cmake_install.cmake",
+		"D:/fungibite/fungibite_kasir/windows/plugins/firebase_core/cmake_install.cmake",
+		"D:/fungibite/fungibite_kasir/windows/plugins/firebase_core/bin/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

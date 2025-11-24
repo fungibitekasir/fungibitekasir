@@ -1,0 +1,71 @@
+name: fungibite_kasir
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  firebase_core: ^3.3.0
+  cloud_firestore: ^5.4.0
+  firebase_auth: ^5.2.0
+  cupertino_icons: ^1.0.8
+  fluttertoast: ^8.2.5
+  fl_chart: ^0.68.0
+  intl: ^0.18.1
+  path_provider: ^2.0.15
+  gsheets: ^0.4.0
+  
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.0
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/fungibite_logo.jpeg"
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - lib/fonts/Poppins/
+
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: lib/fonts/Poppins/Poppins-Thin.ttf
+          weight: 100
+        - asset: lib/fonts/Poppins/Poppins-ExtraLight.ttf
+          weight: 200
+        - asset: lib/fonts/Poppins/Poppins-Light.ttf
+          weight: 300
+        - asset: lib/fonts/Poppins/Poppins-Regular.ttf
+          weight: 400
+        - asset: lib/fonts/Poppins/Poppins-Medium.ttf
+          weight: 500
+        - asset: lib/fonts/Poppins/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: lib/fonts/Poppins/Poppins-Bold.ttf
+          weight: 700
+        - asset: lib/fonts/Poppins/Poppins-ExtraBold.ttf
+          weight: 800
+        - asset: lib/fonts/Poppins/Poppins-Black.ttf
+          weight: 900
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/splash/fungibite_splash.jpeg
+  android: true
+  ios: true
+
+  android_gravity: center

@@ -1,0 +1,347 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Profile|x64">
+      <Configuration>Profile</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{D6C3CDD4-20C6-33CB-BA7D-58B7088F5F4C}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>fungibite_kasir</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\fungibite\fungibite_kasir\windows\runner\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fungibite_kasir.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fungibite_kasir</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">D:\fungibite\fungibite_kasir\windows\runner\Profile\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">fungibite_kasir.dir\Profile\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">fungibite_kasir</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\fungibite\fungibite_kasir\windows\runner\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fungibite_kasir.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fungibite_kasir</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\fungibite\fungibite_kasir\windows;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\cpp_client_wrapper\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\cloud_firestore\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_core\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_auth\windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "D:/fungibite/fungibite_kasir/windows/extracted/firebase_cpp_sdk_windows/include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>"4100"</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_HAS_EXCEPTIONS=0;_DEBUG;FLUTTER_VERSION="1.0.0+1";FLUTTER_VERSION_MAJOR=1;FLUTTER_VERSION_MINOR=0;FLUTTER_VERSION_PATCH=0;FLUTTER_VERSION_BUILD=1;NOMINMAX;UNICODE;_UNICODE;FLUTTER_PLUGIN_IMPL;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_HAS_EXCEPTIONS=0;FLUTTER_VERSION=\"1.0.0+1\";FLUTTER_VERSION_MAJOR=1;FLUTTER_VERSION_MINOR=0;FLUTTER_VERSION_PATCH=0;FLUTTER_VERSION_BUILD=1;NOMINMAX;UNICODE;_UNICODE;FLUTTER_PLUGIN_IMPL;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\fungibite\fungibite_kasir\windows;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\cpp_client_wrapper\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\cloud_firestore\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_core\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_auth\windows\include;D:\fungibite\fungibite_kasir\windows\extracted\firebase_cpp_sdk_windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\fungibite\fungibite_kasir\windows;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\cpp_client_wrapper\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\cloud_firestore\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_core\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_auth\windows\include;D:\fungibite\fungibite_kasir\windows\extracted\firebase_cpp_sdk_windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>..\flutter\Debug\flutter_wrapper_app.lib;dwmapi.lib;..\plugins\cloud_firestore\Debug\cloud_firestore_plugin.lib;..\plugins\firebase_auth\Debug\firebase_auth_plugin.lib;..\plugins\firebase_core\Debug\firebase_core_plugin.lib;..\extracted\firebase_cpp_sdk_windows\libs\windows\VS2019\MD\x64\Debug\firebase_firestore.lib;shell32.lib;Bcrypt.lib;DbgHelp.lib;advapi32.lib;ws2_32.lib;crypt32.lib;rpcrt4.lib;ole32.lib;..\extracted\firebase_cpp_sdk_windows\libs\windows\VS2019\MD\x64\Debug\firebase_app.lib;icu.lib;..\extracted\firebase_cpp_sdk_windows\libs\windows\VS2019\MD\x64\Debug\firebase_auth.lib;..\flutter\Debug\flutter_wrapper_plugin.lib;..\flutter\ephemeral\flutter_windows.dll.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <DataExecutionPrevention></DataExecutionPrevention>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
+      <ImportLibrary>D:/fungibite/fungibite_kasir/windows/runner/Debug/fungibite_kasir.lib</ImportLibrary>
+      <LinkErrorReporting></LinkErrorReporting>
+      <ProgramDataBaseFile>D:/fungibite/fungibite_kasir/windows/runner/Debug/fungibite_kasir.pdb</ProgramDataBaseFile>
+      <RandomizedBaseAddress></RandomizedBaseAddress>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <Manifest>
+      <AdditionalManifestFiles>D:\fungibite\fungibite_kasir\windows\runner\runner.exe.manifest;</AdditionalManifestFiles>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\fungibite\fungibite_kasir\windows;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\cpp_client_wrapper\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\cloud_firestore\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_core\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_auth\windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "D:/fungibite/fungibite_kasir/windows/extracted/firebase_cpp_sdk_windows/include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <DisableSpecificWarnings>"4100"</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_HAS_EXCEPTIONS=0;FLUTTER_VERSION="1.0.0+1";FLUTTER_VERSION_MAJOR=1;FLUTTER_VERSION_MINOR=0;FLUTTER_VERSION_PATCH=0;FLUTTER_VERSION_BUILD=1;NOMINMAX;UNICODE;_UNICODE;FLUTTER_PLUGIN_IMPL;CMAKE_INTDIR="Profile"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_HAS_EXCEPTIONS=0;FLUTTER_VERSION=\"1.0.0+1\";FLUTTER_VERSION_MAJOR=1;FLUTTER_VERSION_MINOR=0;FLUTTER_VERSION_PATCH=0;FLUTTER_VERSION_BUILD=1;NOMINMAX;UNICODE;_UNICODE;FLUTTER_PLUGIN_IMPL;CMAKE_INTDIR=\"Profile\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\fungibite\fungibite_kasir\windows;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\cpp_client_wrapper\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\cloud_firestore\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_core\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_auth\windows\include;D:\fungibite\fungibite_kasir\windows\extracted\firebase_cpp_sdk_windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\fungibite\fungibite_kasir\windows;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\cpp_client_wrapper\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\cloud_firestore\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_core\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_auth\windows\include;D:\fungibite\fungibite_kasir\windows\extracted\firebase_cpp_sdk_windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>..\flutter\Profile\flutter_wrapper_app.lib;dwmapi.lib;..\plugins\cloud_firestore\Profile\cloud_firestore_plugin.lib;..\plugins\firebase_auth\Profile\firebase_auth_plugin.lib;..\plugins\firebase_core\Profile\firebase_core_plugin.lib;..\extracted\firebase_cpp_sdk_windows\libs\windows\VS2019\MD\x64\Debug\firebase_firestore.lib;shell32.lib;Bcrypt.lib;DbgHelp.lib;advapi32.lib;ws2_32.lib;crypt32.lib;rpcrt4.lib;ole32.lib;..\extracted\firebase_cpp_sdk_windows\libs\windows\VS2019\MD\x64\Debug\firebase_app.lib;icu.lib;..\extracted\firebase_cpp_sdk_windows\libs\windows\VS2019\MD\x64\Debug\firebase_auth.lib;..\flutter\Profile\flutter_wrapper_plugin.lib;..\flutter\ephemeral\flutter_windows.dll.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <DataExecutionPrevention></DataExecutionPrevention>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
+      <ImportLibrary>D:/fungibite/fungibite_kasir/windows/runner/Profile/fungibite_kasir.lib</ImportLibrary>
+      <LinkErrorReporting></LinkErrorReporting>
+      <ProgramDataBaseFile>D:/fungibite/fungibite_kasir/windows/runner/Profile/fungibite_kasir.pdb</ProgramDataBaseFile>
+      <RandomizedBaseAddress></RandomizedBaseAddress>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <Manifest>
+      <AdditionalManifestFiles>D:\fungibite\fungibite_kasir\windows\runner\runner.exe.manifest;</AdditionalManifestFiles>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\fungibite\fungibite_kasir\windows;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\cpp_client_wrapper\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\cloud_firestore\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_core\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_auth\windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "D:/fungibite/fungibite_kasir/windows/extracted/firebase_cpp_sdk_windows/include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <DisableSpecificWarnings>"4100"</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_HAS_EXCEPTIONS=0;FLUTTER_VERSION="1.0.0+1";FLUTTER_VERSION_MAJOR=1;FLUTTER_VERSION_MINOR=0;FLUTTER_VERSION_PATCH=0;FLUTTER_VERSION_BUILD=1;NOMINMAX;UNICODE;_UNICODE;FLUTTER_PLUGIN_IMPL;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_HAS_EXCEPTIONS=0;FLUTTER_VERSION=\"1.0.0+1\";FLUTTER_VERSION_MAJOR=1;FLUTTER_VERSION_MINOR=0;FLUTTER_VERSION_PATCH=0;FLUTTER_VERSION_BUILD=1;NOMINMAX;UNICODE;_UNICODE;FLUTTER_PLUGIN_IMPL;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\fungibite\fungibite_kasir\windows;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\cpp_client_wrapper\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\cloud_firestore\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_core\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_auth\windows\include;D:\fungibite\fungibite_kasir\windows\extracted\firebase_cpp_sdk_windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\fungibite\fungibite_kasir\windows;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\cpp_client_wrapper\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\cloud_firestore\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_core\windows\include;D:\fungibite\fungibite_kasir\windows\flutter\ephemeral\.plugin_symlinks\firebase_auth\windows\include;D:\fungibite\fungibite_kasir\windows\extracted\firebase_cpp_sdk_windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>..\flutter\Release\flutter_wrapper_app.lib;dwmapi.lib;..\plugins\cloud_firestore\Release\cloud_firestore_plugin.lib;..\plugins\firebase_auth\Release\firebase_auth_plugin.lib;..\plugins\firebase_core\Release\firebase_core_plugin.lib;..\extracted\firebase_cpp_sdk_windows\libs\windows\VS2019\MD\x64\Release\firebase_firestore.lib;shell32.lib;Bcrypt.lib;DbgHelp.lib;advapi32.lib;ws2_32.lib;crypt32.lib;rpcrt4.lib;ole32.lib;..\extracted\firebase_cpp_sdk_windows\libs\windows\VS2019\MD\x64\Release\firebase_app.lib;icu.lib;..\extracted\firebase_cpp_sdk_windows\libs\windows\VS2019\MD\x64\Release\firebase_auth.lib;..\flutter\Release\flutter_wrapper_plugin.lib;..\flutter\ephemeral\flutter_windows.dll.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <DataExecutionPrevention></DataExecutionPrevention>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
+      <ImportLibrary>D:/fungibite/fungibite_kasir/windows/runner/Release/fungibite_kasir.lib</ImportLibrary>
+      <LinkErrorReporting></LinkErrorReporting>
+      <ProgramDataBaseFile>D:/fungibite/fungibite_kasir/windows/runner/Release/fungibite_kasir.pdb</ProgramDataBaseFile>
+      <RandomizedBaseAddress></RandomizedBaseAddress>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <Manifest>
+      <AdditionalManifestFiles>D:\fungibite\fungibite_kasir\windows\runner\runner.exe.manifest;</AdditionalManifestFiles>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\fungibite\fungibite_kasir\windows\runner\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/fungibite/fungibite_kasir/windows/runner/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SD:/fungibite/fungibite_kasir/windows -BD:/fungibite/fungibite_kasir/windows --check-stamp-file D:/fungibite/fungibite_kasir/windows/runner/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\fungibite\fungibite_kasir\windows\runner\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Building Custom Rule D:/fungibite/fungibite_kasir/windows/runner/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">setlocal
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SD:/fungibite/fungibite_kasir/windows -BD:/fungibite/fungibite_kasir/windows --check-stamp-file D:/fungibite/fungibite_kasir/windows/runner/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">D:\fungibite\fungibite_kasir\windows\runner\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/fungibite/fungibite_kasir/windows/runner/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SD:/fungibite/fungibite_kasir/windows -BD:/fungibite/fungibite_kasir/windows --check-stamp-file D:/fungibite/fungibite_kasir/windows/runner/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\fungibite\fungibite_kasir\windows\runner\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="D:\fungibite\fungibite_kasir\windows\runner\flutter_window.cpp" />
+    <ClCompile Include="D:\fungibite\fungibite_kasir\windows\runner\main.cpp" />
+    <ClCompile Include="D:\fungibite\fungibite_kasir\windows\runner\utils.cpp" />
+    <ClCompile Include="D:\fungibite\fungibite_kasir\windows\runner\win32_window.cpp" />
+    <ClCompile Include="D:\fungibite\fungibite_kasir\windows\flutter\generated_plugin_registrant.cc" />
+    <ResourceCompile Include="D:\fungibite\fungibite_kasir\windows\runner\Runner.rc" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="D:\fungibite\fungibite_kasir\windows\ZERO_CHECK.vcxproj">
+      <Project>{09D132EB-BC10-3076-B174-DFF0F3A9901B}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="D:\fungibite\fungibite_kasir\windows\plugins\cloud_firestore\cloud_firestore_plugin.vcxproj">
+      <Project>{5051974B-D75B-346E-A101-06D98BC8A9D1}</Project>
+      <Name>cloud_firestore_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\fungibite\fungibite_kasir\windows\plugins\firebase_auth\firebase_auth_plugin.vcxproj">
+      <Project>{18E82228-14B5-3994-9936-E0C4C34E2330}</Project>
+      <Name>firebase_auth_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\fungibite\fungibite_kasir\windows\plugins\firebase_core\firebase_core_plugin.vcxproj">
+      <Project>{E64FDB42-32A8-3EA3-99E1-0C6E447A460D}</Project>
+      <Name>firebase_core_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\fungibite\fungibite_kasir\windows\flutter\flutter_assemble.vcxproj">
+      <Project>{52C3C193-1A2B-315C-B268-1B19ADB63B2A}</Project>
+      <Name>flutter_assemble</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="D:\fungibite\fungibite_kasir\windows\flutter\flutter_wrapper_app.vcxproj">
+      <Project>{6075D4C9-01CD-3AC8-8F5C-16CBAEA2C529}</Project>
+      <Name>flutter_wrapper_app</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\fungibite\fungibite_kasir\windows\flutter\flutter_wrapper_plugin.vcxproj">
+      <Project>{DF5C6844-26E3-3D46-BA87-8374AA1B4687}</Project>
+      <Name>flutter_wrapper_plugin</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

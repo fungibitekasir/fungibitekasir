@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "965166224403",
+    "project_id": "fgbksr",
+    "storage_bucket": "fgbksr.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:965166224403:android:3d1958345ff063c9571be6",
+        "android_client_info": {
+          "package_name": "com.example.fungibite_kasir"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAX0qy0ihE1rwWw9SUEhz8rBLwn2ygoXA0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\fungibite\fungibite_kasir\windows\CMakeFiles\3b71b27132c7735eb463fd3b4978262e\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{13D7A56E-0724-3E5B-BB8C-EAE7E4AE1EF6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
