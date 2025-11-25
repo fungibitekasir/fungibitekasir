@@ -3,7 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../widgets/sidebar_wrapper.dart';
 import 'package:intl/intl.dart';
-import '../spreadsheet_function.dart';
+import 'package:excel/excel.dart';
+import 'dart:html' as html;
+import 'dart:convert';
+import 'dart:typed_data';
 
 class DailyReportPage extends StatefulWidget {
   final String storeId;
@@ -176,117 +179,159 @@ Widget _detailRow(String label, dynamic value) {
         .toList();
   }
 
-    Future<void> pushDailyReport(
-    String storeId,
-    DateTime startDate,
-    DateTime endDate,
-  ) async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('stores')
-        .doc(storeId)
-        .collection('orders')
-        .get();
+    Future<void> downloadDailyReportExcel(
 
-    final allData = snapshot.docs;
+        String storeId,
+        DateTime startDate,
+        DateTime endDate,
+        String selectedStatus,
+      ) async {
+        final snapshot = await FirebaseFirestore.instance
+            .collection('stores')
+            .doc(storeId)
+            .collection('orders')
+            .get();
+        final allDocs = snapshot.docs;
 
-    for (var doc in allData) {
-      final dataMap = doc.data();
+        // PREPARE EXCEL
+        final excel = Excel.createExcel();
+        excel.delete('Sheet1');
+        final sheet = excel['Daily Report'];
 
-      // PARSE CREATED_AT
-      DateTime createdAt;
-      final createdAtRaw = dataMap['created_at'];
-      if (createdAtRaw is Timestamp) {
-        createdAt = createdAtRaw.toDate();
-      } else if (createdAtRaw is String) {
-        createdAt = DateTime.tryParse(createdAtRaw) ?? DateTime.now();
-      } else {
-        createdAt = DateTime.now();
+        // ✅ HEADER - WRAPPED IN TextCellValue()
+        sheet.appendRow([
+          TextCellValue("Order ID"),
+          TextCellValue("Customer Name"),
+          TextCellValue("Cashier"),
+          TextCellValue("Created At"),
+          TextCellValue("End Time"),
+          TextCellValue("Payment"),
+          TextCellValue("Status"),
+          TextCellValue("Table"),
+          TextCellValue("Total"),
+          TextCellValue("Type"),
+          TextCellValue("Item Name"),
+          TextCellValue("Category"),
+          TextCellValue("Qty"),
+          TextCellValue("Price"),
+          TextCellValue("Size"),
+          TextCellValue("Disc (%)"),
+          TextCellValue("Disc Nominal"),
+          TextCellValue("Note"),
+        ]);
+
+        for (var doc in allDocs) {
+          final dataMap = doc.data();
+
+          // PARSE CREATED_AT
+          DateTime createdAt;
+          final createdAtRaw = dataMap['created_at'];
+          if (createdAtRaw is Timestamp) {
+            createdAt = createdAtRaw.toDate();
+          } else if (createdAtRaw is String) {
+            createdAt = DateTime.tryParse(createdAtRaw) ?? DateTime.now();
+          } else {
+            createdAt = DateTime.now();
+          }
+
+          // PARSE END_TIME
+          DateTime? endTime;
+          final endRaw = dataMap['endTime'];
+          if (endRaw is Timestamp) {
+            endTime = endRaw.toDate();
+          } else if (endRaw is String) {
+            endTime = DateTime.tryParse(endRaw);
+          }
+
+          // FILTER DATE
+          if (createdAt.isBefore(startDate) || createdAt.isAfter(endDate)) continue;
+
+          // FILTER STATUS
+          final status = (dataMap['status'] ?? '').toString().toLowerCase();
+          if (selectedStatus.toLowerCase() != "all" &&
+              status != selectedStatus.toLowerCase()) {
+            continue;
+          }
+
+          final items = (dataMap['items'] as List?) ?? [];
+          
+          for (var item in items) {
+            final itemMap = item as Map<String, dynamic>? ?? {};
+
+            // ✅ DATA ROWS - WRAPPED IN CORRECT CellValue TYPES
+            sheet.appendRow([
+              TextCellValue(dataMap['order_id']?.toString() ?? '-'),
+              TextCellValue(dataMap['customer_name']?.toString() ?? '-'),
+              TextCellValue(dataMap['cashier']?.toString() ?? '-'),
+              TextCellValue(DateFormat('dd/MM/yyyy HH:mm').format(createdAt)),
+              TextCellValue(endTime != null ? DateFormat('dd/MM/yyyy HH:mm').format(endTime) : '-'),
+              TextCellValue(dataMap['payment']?.toString() ?? '-'),
+              TextCellValue(dataMap['status']?.toString() ?? '-'),
+              TextCellValue(dataMap['table']?.toString() ?? '-'),
+              IntCellValue(dataMap['total'] as int? ?? 0), // ✅ INTEGER
+              TextCellValue(dataMap['type']?.toString() ?? '-'),
+              TextCellValue(itemMap['name']?.toString() ?? '-'),
+              TextCellValue(itemMap['category']?.toString() ?? '-'),
+              IntCellValue(itemMap['qty'] as int? ?? 0), // ✅ INTEGER
+              IntCellValue(itemMap['price'] as int? ?? 0), // ✅ INTEGER
+              TextCellValue(itemMap['size']?.toString() ?? '-'),
+              TextCellValue(itemMap['disc']?.toString() ?? '0'),
+              TextCellValue(itemMap['discNominal']?.toString() ?? '0'),
+              TextCellValue(itemMap['noted']?.toString() ?? '-'),
+            ]);
+          }
+        }
+
+        // SAVE EXCEL TO BLOB FOR DOWNLOAD
+        final fileBytes = excel.save();
+
+        if (fileBytes != null) {
+          final blob = html.Blob([fileBytes], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+          final url = html.Url.createObjectUrlFromBlob(blob);
+          final fileName = "Daily_Report_${DateFormat('yyyyMMdd').format(startDate)}_${DateFormat('yyyyMMdd').format(endDate)}.xlsx";
+          
+          final anchor = html.AnchorElement(href: url)
+            ..setAttribute('download', fileName)
+            ..click();
+          html.Url.revokeObjectUrl(url);
+          
+          print("✅ Excel downloaded: $fileName");
+        }
       }
 
-      // PARSE END TIME
-      DateTime? endTime;
-      final endRaw = dataMap['endTime'];
-      if (endRaw is Timestamp) {
-        endTime = endRaw.toDate();
-      } else if (endRaw is String) {
-        endTime = DateTime.tryParse(endRaw);
+        Future<void> _pickDateRange() async {
+        final picked = await showDateRangePicker(
+          context: context,
+          firstDate: DateTime(2020),
+          lastDate: DateTime.now(),
+          initialDateRange: _startDate != null && _endDate != null
+              ? DateTimeRange(start: _startDate!, end: _endDate!)
+              : null,
+          builder: (context, child) {
+            // Membuat ukuran dialog lebih kecil
+            return Center(
+              child: SizedBox(
+                width: 400,
+                height: 400,
+                child: child,
+              ),
+            );
+          },
+        );
+
+        if (picked != null) {
+          setState(() {
+            _startDate = picked.start;
+            _endDate = DateTime(
+              picked.end.year,
+              picked.end.month,
+              picked.end.day,
+              23, 59, 59,
+            );
+            currentPage = 1;
+          });
+        }
       }
-
-      // Filter tanggal
-      if (createdAt.isBefore(startDate) || createdAt.isAfter(endDate)) continue;
-
-      // Filter status
-      final status = (dataMap['status'] ?? '').toString().toLowerCase();
-      if (selectedStatus.toLowerCase() != 'all' &&
-          selectedStatus.toLowerCase() != status) {
-        continue;
-      }
-
-      // ITEMS
-      final items = (dataMap['items'] as List<dynamic>? ?? []);
-
-      for (var item in items) {
-        final itemMap = item as Map<String, dynamic>? ?? {};
-
-        await pushToSheet({
-          "order_id": dataMap['order_id'] ?? '-',
-          "customer_name": dataMap['customer_name'] ?? '-',
-          "cashier": dataMap['cashier'] ?? '-',
-          "created_at": createdAt.toString(),
-          "end_time": endTime?.toString() ?? '-',
-          "payment": dataMap['payment'] ?? '-',
-          "status": dataMap['status'] ?? '-',
-          "table": dataMap['table'] ?? '-',
-          "total": dataMap['total'] ?? 0,
-          "type": dataMap['type'] ?? '-',
-
-          // ITEM DETAIL (FULL)
-          "item_name": itemMap['name'] ?? '-',
-          "item_category": itemMap['category']?.toString() ?? '-',
-          "item_qty": itemMap['qty'] ?? 0,
-          "item_price": itemMap['price'] ?? 0,
-          "item_size": itemMap['size'] ?? '-',
-          "item_disc": itemMap['disc']?.toString() ?? '0',
-          "item_disc_nominal": itemMap['discNominal']?.toString() ?? '0',
-          "item_note": itemMap['noted'] ?? '-',
-        });
-      }
-    }
-  }
-
-  Future<void> _pickDateRange() async {
-  final picked = await showDateRangePicker(
-    context: context,
-    firstDate: DateTime(2020),
-    lastDate: DateTime.now(),
-    initialDateRange: _startDate != null && _endDate != null
-        ? DateTimeRange(start: _startDate!, end: _endDate!)
-        : null,
-    builder: (context, child) {
-      // Membuat ukuran dialog lebih kecil
-      return Center(
-        child: SizedBox(
-          width: 400,
-          height: 400,
-          child: child,
-        ),
-      );
-    },
-  );
-
-  if (picked != null) {
-    setState(() {
-      _startDate = picked.start;
-      _endDate = DateTime(
-        picked.end.year,
-        picked.end.month,
-        picked.end.day,
-        23, 59, 59,
-      );
-      currentPage = 1;
-    });
-  }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -550,99 +595,96 @@ Widget _detailRow(String label, dynamic value) {
 
                           // FILTER ROW
                           Row(
-  children: [
-    ElevatedButton.icon(
-      onPressed: () async {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (_) => const Center(child: CircularProgressIndicator()),
-        );
-        try {
-          if (_startDate == null || _endDate == null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Silakan pilih tanggal dulu.")),
-            );
-            return;
-          }
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                              if (_startDate == null || _endDate == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Silakan pilih tanggal dulu.")),
+                                );
+                                return;
+                              }
 
-          await pushDailyReport(
-            widget.storeId,
-            _startDate!,
-            _endDate!,
-          );
-          Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Daily report berhasil dikirim ke Spreadsheet')),
-          );
-        } catch (e) {
-          Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Gagal push data: $e')),
-          );
-        }
-      },
-      icon: const Icon(Icons.send),
-      label: const Text("Push Daily Report"),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
-      ),
-    ),
-    const SizedBox(width: 12),
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (_) => const Center(child: CircularProgressIndicator()),
+                              );
 
-    // BUTTON FILTER DATE
-    ElevatedButton.icon(
-      onPressed: _pickDateRange,
-      icon: const Icon(Icons.date_range),
-      label: const Text("Filter Date"),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.brown,
-        foregroundColor: Colors.white,
-      ),
-    ),
+                              await downloadDailyReportExcel(
+                                widget.storeId,
+                                _startDate!,
+                                _endDate!,
+                                selectedStatus,
+                              );
 
-    const SizedBox(width: 12),
+                              Navigator.of(context).pop();
 
-    // DROPDOWN FILTER STATUS
-    DropdownButton<String>(
-      value: selectedStatus,
-      items: statusOptions
-          .map((status) => DropdownMenuItem(
-                value: status,
-                child: Text(status),
-              ))
-          .toList(),
-      onChanged: (value) {
-        if (value != null) {
-          setState(() {
-            selectedStatus = value;
-            currentPage = 1;
-          });
-        }
-      },
-    ),
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("Excel berhasil diunduh!")),
+                              );
+                            },
+                            icon: const Icon(Icons.download),
+                            label: const Text("Download Excel"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
 
-    // Tampilkan tanggal range jika ada
-    if (_startDate != null)
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        margin: const EdgeInsets.only(left: 12),
-        decoration: BoxDecoration(
-          color: Colors.brown.shade100.withOpacity(0.3),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Text(
-          "${DateFormat('yyyy-MM-dd').format(_startDate!)} → ${DateFormat('yyyy-MM-dd').format(_endDate!)}",
-          style: const TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 14,
-            color: Colors.brown,
-          ),
-        ),
-      ),
-  ],
-),
+                            // BUTTON FILTER DATE
+                            ElevatedButton.icon(
+                              onPressed: _pickDateRange,
+                              icon: const Icon(Icons.date_range),
+                              label: const Text("Filter Date"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.brown,
+                                foregroundColor: Colors.white,
+                              ),
+                            ),
+
+                            const SizedBox(width: 12),
+
+                            // DROPDOWN FILTER STATUS
+                            DropdownButton<String>(
+                              value: selectedStatus,
+                              items: statusOptions
+                                  .map((status) => DropdownMenuItem(
+                                        value: status,
+                                        child: Text(status),
+                                      ))
+                                  .toList(),
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    selectedStatus = value;
+                                    currentPage = 1;
+                                  });
+                                }
+                              },
+                            ),
+
+                            // Tampilkan tanggal range jika ada
+                            if (_startDate != null)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                margin: const EdgeInsets.only(left: 12),
+                                decoration: BoxDecoration(
+                                  color: Colors.brown.shade100.withOpacity(0.3),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  "${DateFormat('yyyy-MM-dd').format(_startDate!)} → ${DateFormat('yyyy-MM-dd').format(_endDate!)}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: Colors.brown,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
 
                           const SizedBox(height: 16),
 
