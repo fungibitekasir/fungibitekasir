@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:excel/excel.dart';
 import 'dart:html' as html;
 import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:typed_data'; //gatau
 
 class DailyReportPage extends StatefulWidget {
   final String storeId;
