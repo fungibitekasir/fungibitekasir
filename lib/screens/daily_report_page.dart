@@ -4,9 +4,11 @@ import 'package:fl_chart/fl_chart.dart';
 import '../widgets/sidebar_wrapper.dart';
 import 'package:intl/intl.dart';
 import 'package:excel/excel.dart';
-import 'dart:html' as html;
-import 'dart:convert';
-import 'dart:typed_data'; //gatau
+import '../utils/download_excel.dart';
+import 'package:flutter/foundation.dart';
+import '../utils/download_excel_mobile.dart';
+import '../utils/download_excel_web.dart';
+
 
 class DailyReportPage extends StatefulWidget {
   final String storeId;
@@ -284,18 +286,14 @@ Widget _detailRow(String label, dynamic value) {
 
         // SAVE EXCEL TO BLOB FOR DOWNLOAD
         final fileBytes = excel.save();
+        if (fileBytes == null) return;
 
-        if (fileBytes != null) {
-          final blob = html.Blob([fileBytes], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-          final url = html.Url.createObjectUrlFromBlob(blob);
-          final fileName = "Daily_Report_${DateFormat('yyyyMMdd').format(startDate)}_${DateFormat('yyyyMMdd').format(endDate)}.xlsx";
-          
-          final anchor = html.AnchorElement(href: url)
-            ..setAttribute('download', fileName)
-            ..click();
-          html.Url.revokeObjectUrl(url);
-          
-          print("✅ Excel downloaded: $fileName");
+        final fileName = "Daily_Report_${DateFormat('yyyyMMdd').format(startDate)}_${DateFormat('yyyyMMdd').format(endDate)}";
+
+        if (kIsWeb) {
+          downloadExcelWeb(fileBytes, "$fileName.xlsx");
+        } else {
+          await downloadExcelMobile(fileBytes, fileName);
         }
       }
 
