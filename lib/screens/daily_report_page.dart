@@ -176,7 +176,7 @@ Widget _detailRow(String label, dynamic value) {
         .toList();
   }
 
-  Future<void> pushDailyReport(
+    Future<void> pushDailyReport(
     String storeId,
     DateTime startDate,
     DateTime endDate,
