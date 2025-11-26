@@ -23,14 +23,8 @@ class _PaymentsManagerPageState extends State<PaymentsManagerPage> {
   final TextEditingController _nameController = TextEditingController();
   String? _selectedPaymentId;
   String _activeForm = 'add';
-  String? _selectedAdminId;
-
-  Stream<QuerySnapshot> _getAdmins() {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .where('role', isEqualTo: 'admin')
-        .snapshots();
-  }
+  String? _selectedAdmin;
+  bool _isLoading = false;
 
   Future<String> _getUserNameByEmail(String email) async {
     final snapshot = await FirebaseFirestore.instance
@@ -216,6 +210,7 @@ class _PaymentsManagerPageState extends State<PaymentsManagerPage> {
                                           setState(() {
                                             _selectedPaymentId = payment.id;
                                             _nameController.text = payment['name'] ?? '';
+                                            _selectedAdmin = payment['admin'];
                                             _activeForm = 'edit';
                                           });
                                         },
@@ -267,14 +262,14 @@ class _PaymentsManagerPageState extends State<PaymentsManagerPage> {
                                                   );
 
                                                   if (confirm == true) {
+                                                    await _deletePayment(context, payment.id);
+                                                    
                                                     await FirebaseFirestore.instance
                                                         .collection('stores')
                                                         .doc(widget.storeId)
                                                         .collection('payments')
                                                         .doc(payment.id)
                                                         .delete();
-
-                                                    await _deletePayment(context, payment.id);
 
                                                     if (mounted) {
                                                       ScaffoldMessenger.of(context).showSnackBar(
@@ -319,6 +314,7 @@ class _PaymentsManagerPageState extends State<PaymentsManagerPage> {
                                         _activeForm = 'add';
                                         _selectedPaymentId = null;
                                         _nameController.clear();
+                                        _selectedAdmin = null;
                                       });
                                     },
                                     style: OutlinedButton.styleFrom(
@@ -384,56 +380,57 @@ class _PaymentsManagerPageState extends State<PaymentsManagerPage> {
                             const Text("Payment Name"),
                             TextField(controller: _nameController),
 
-                            const SizedBox(height: 16),
-                            const Text("Pilih Admin"),
-
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                border: Border.all(color: brown, width: 1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: StreamBuilder<QuerySnapshot>(
-                                stream: _getAdmins(),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return const Padding(
-                                      padding: EdgeInsets.all(12),
-                                      child: Text("Loading admin...", style: TextStyle(color: Colors.brown)),
-                                    );
-                                  }
-
-                                  final admins = snapshot.data!.docs;
-
-                                  return DropdownButtonHideUnderline(
-                                    child: DropdownButton<String>(
-                                      value: _selectedAdminId,
-                                      hint: const Text(
-                                        "Pilih Admin",
-                                        style: TextStyle(color: Colors.brown),
-                                      ),
-                                      icon: const Icon(Icons.arrow_drop_down, color: Colors.brown),
-                                      dropdownColor: Colors.white,
-                                      style: const TextStyle(color: Colors.brown),
-                                      items: admins.map((doc) {
-                                        return DropdownMenuItem(
-                                          value: doc.id,
-                                          child: Text(
-                                            doc['name'] ?? 'No Name',
-                                            style: const TextStyle(color: Colors.brown),
-                                          ),
-                                        );
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedAdminId = value;
-                                        });
-                                      },
+                            const SizedBox(height: 10),
+                            
+                            const Text("Admin"),
+                            StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('users')
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                }
+                                return DropdownButtonFormField<String>(
+                                  value: _selectedAdmin,
+                                  hint: const Text(
+                                    'Pilih admin..',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: Color(0xFF4B2E2B)),
+                                  ),
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: Colors.transparent,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(color: Color(0xFF4B2E2B)),
                                     ),
-                                  );
-                                },
-                              ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(color: Color(0xFF4B2E2B)),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(color: Color(0xFF4B2E2B), width: 2),
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                                  ),
+                                  dropdownColor: Colors.white,
+                                  items: snapshot.data!.docs.map((doc) {
+                                    final userName = doc['name'] ?? 'Tanpa Nama';
+                                    return DropdownMenuItem<String>(
+                                      value: userName,
+                                      child: Text(userName),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedAdmin = value;
+                                    });
+                                  },
+                                );
+                              },
                             ),
 
                             const Spacer(),
@@ -443,57 +440,77 @@ class _PaymentsManagerPageState extends State<PaymentsManagerPage> {
                               height: 48,
                               child: ElevatedButton.icon(
                                 icon: const Icon(Icons.save),
-                                label: Text(
-                                  _activeForm == 'add'
-                                      ? "Tambah Payment"
-                                      : "Simpan Perubahan",
-                                ),
+                                label: _isLoading
+                                    ? const SizedBox(
+                                        height: 24,
+                                        width: 24,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : Text(
+                                        _activeForm == 'add'
+                                            ? "Tambah Payment"
+                                            : "Simpan Perubahan",
+                                      ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: brown,
                                   foregroundColor: Colors.white,
                                 ),
-                                onPressed: () async {
-                                  if (_nameController.text.isEmpty) return;
+                                onPressed: _isLoading ? null : () async {
+                                  if (_nameController.text.isEmpty || _selectedAdmin == null) return;
+
+                                  setState(() => _isLoading = true);
 
                                   final ref = FirebaseFirestore.instance
                                       .collection('stores')
                                       .doc(widget.storeId)
                                       .collection('payments');
 
-                                  final messenger = ScaffoldMessenger.of(context);
+                                  try {
+                                    if (_activeForm == 'add') {
+                                      final newDoc = await ref.add({
+                                        'name': _nameController.text,
+                                        'admin': _selectedAdmin,
+                                      });
 
-                                  if (_activeForm == 'add') {
-                                    final newDoc = await ref.add({
-                                      'name': _nameController.text,
-                                      'adminId': _selectedAdminId,
-                                    });
+                                      await _addPayment(context, newDoc.id);
+                                    } else if (_selectedPaymentId != null) {
+                                      await ref.doc(_selectedPaymentId).update({
+                                        'name': _nameController.text,
+                                        'admin': _selectedAdmin,
+                                      });
 
-                                    await _addPayment(context, newDoc.id);
-                                  } else if (_selectedPaymentId != null) {
-                                    await ref.doc(_selectedPaymentId).update({
-                                      'name': _nameController.text,
-                                      'adminId': _selectedAdminId,
-                                    });
+                                      await _editPayment(context, _selectedPaymentId!);
+                                    }
 
-                                    await _editPayment(context, _selectedPaymentId!);
-                                  }
+                                    if (!mounted) return;
 
-                                  if (!mounted) return;
-
-                                  messenger.showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        _activeForm == 'add'
-                                            ? "Payment ditambahkan"
-                                            : "Payment diperbarui",
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          _activeForm == 'add'
+                                              ? "Payment ditambahkan"
+                                              : "Payment diperbarui",
+                                        ),
                                       ),
-                                    ),
-                                  );
+                                    );
 
-                                  _nameController.clear();
-                                  _selectedPaymentId = null;
+                                    _nameController.clear();
+                                    _selectedAdmin = null;
+                                    _selectedPaymentId = null;
 
-                                  setState(() => _activeForm = 'add');
+                                    setState(() => _activeForm = 'add');
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text("Terjadi kesalahan: $e"),
+                                      ),
+                                    );
+                                  } finally {
+                                    setState(() => _isLoading = false);
+                                  }
                                 },
                               ),
                             )
