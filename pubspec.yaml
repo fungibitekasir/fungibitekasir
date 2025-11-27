@@ -23,6 +23,7 @@ dependencies:
   js: ^0.6.6
   excel: ^4.0.3
   file_saver: ^0.2.8
+  syncfusion_flutter_xlsio: ^28.1.33
 
   
 

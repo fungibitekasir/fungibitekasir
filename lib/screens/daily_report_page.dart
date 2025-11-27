@@ -141,6 +141,143 @@ class _DailyReportPageState extends State<DailyReportPage> {
   );
 }
 
+void _showCategoryDetail(String categoryName, List<QueryDocumentSnapshot> filteredDocs) {
+  // Hitung menu per category
+  Map<String, int> menuInCategory = {};
+  
+  for (var doc in filteredDocs) {
+    final data = doc.data() as Map<String, dynamic>;
+    final items = (data['items'] as List?) ?? [];
+    
+    for (var item in items) {
+      final itemMap = item as Map<String, dynamic>;
+      final categories = itemMap['category'] as List<dynamic>?;
+      final cat = categories != null && categories.isNotEmpty
+          ? categories.first.toString()
+          : "Uncategorized";
+      
+      if (cat == categoryName) {
+        final menuName = itemMap['name']?.toString() ?? 'Unknown';
+        final qty = (itemMap['qty'] ?? 1) as int;
+        menuInCategory[menuName] = (menuInCategory[menuName] ?? 0) + qty;
+      }
+    }
+  }
+
+  // Siapkan data untuk pie chart
+  final sortedMenus = menuInCategory.entries.toList()
+    ..sort((a, b) => b.value.compareTo(a.value));
+  
+  final colors = [
+    Colors.red.shade700,
+    Colors.blue.shade700,
+    Colors.green.shade700,
+    Colors.orange.shade700,
+    Colors.purple.shade700,
+    Colors.teal.shade700,
+    Colors.pink.shade700,
+    Colors.indigo.shade700,
+  ];
+
+  final pieData = sortedMenus.asMap().entries.map((entry) {
+    final index = entry.key;
+    final menu = entry.value;
+    return PieChartSectionData(
+      color: colors[index % colors.length],
+      value: menu.value.toDouble(),
+      title: '${menu.value}',
+      radius: 80,
+      titleStyle: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+    );
+  }).toList();
+
+  showDialog(
+    context: context,
+    builder: (context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Container(
+          width: 500,
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Menu in $categoryName",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // Pie Chart
+              SizedBox(
+                height: 250,
+                child: pieData.isEmpty
+                    ? const Center(child: Text("No data available"))
+                    : PieChart(
+                        PieChartData(
+                          sections: pieData,
+                          centerSpaceRadius: 0,
+                          sectionsSpace: 2,
+                          borderData: FlBorderData(show: false),
+                        ),
+                      ),
+              ),
+              
+              const SizedBox(height: 24),
+
+              // Legend
+              Wrap(
+                spacing: 16,
+                runSpacing: 12,
+                alignment: WrapAlignment.center,
+                children: sortedMenus.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final menu = entry.value;
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 16,
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: colors[index % colors.length],
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        "${menu.key} (${menu.value})",
+                        style: const TextStyle(fontSize: 13),
+                      ),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
 Widget _detailRow(String label, dynamic value) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 6),
@@ -182,121 +319,330 @@ Widget _detailRow(String label, dynamic value) {
   }
 
     Future<void> downloadDailyReportExcel(
+      String storeId,
+      DateTime startDate,
+      DateTime endDate,
+      String selectedStatus,
+    ) async {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('stores')
+          .doc(storeId)
+          .collection('orders')
+          .get();
+      final allDocs = snapshot.docs;
 
-        String storeId,
-        DateTime startDate,
-        DateTime endDate,
-        String selectedStatus,
-      ) async {
-        final snapshot = await FirebaseFirestore.instance
-            .collection('stores')
-            .doc(storeId)
-            .collection('orders')
-            .get();
-        final allDocs = snapshot.docs;
+      // PREPARE EXCEL
+      final excel = Excel.createExcel();
+      excel.delete('Sheet1');
+      
+      // ========== SHEET 1: RAW DATA ==========
+      final sheet = excel['Daily Report'];
 
-        // PREPARE EXCEL
-        final excel = Excel.createExcel();
-        excel.delete('Sheet1');
-        final sheet = excel['Daily Report'];
+      // HEADER
+      sheet.appendRow([
+        TextCellValue("Order ID"),
+        TextCellValue("Customer Name"),
+        TextCellValue("Cashier"),
+        TextCellValue("Created At"),
+        TextCellValue("End Time"),
+        TextCellValue("Payment"),
+        TextCellValue("Status"),
+        TextCellValue("Table"),
+        TextCellValue("Total"),
+        TextCellValue("Type"),
+        TextCellValue("Item Name"),
+        TextCellValue("Category"),
+        TextCellValue("Qty"),
+        TextCellValue("Price"),
+        TextCellValue("Size"),
+        TextCellValue("Disc (%)"),
+        TextCellValue("Disc Nominal"),
+        TextCellValue("Note"),
+      ]);
 
-        // ✅ HEADER - WRAPPED IN TextCellValue()
-        sheet.appendRow([
-          TextCellValue("Order ID"),
-          TextCellValue("Customer Name"),
-          TextCellValue("Cashier"),
-          TextCellValue("Created At"),
-          TextCellValue("End Time"),
-          TextCellValue("Payment"),
-          TextCellValue("Status"),
-          TextCellValue("Table"),
-          TextCellValue("Total"),
-          TextCellValue("Type"),
-          TextCellValue("Item Name"),
-          TextCellValue("Category"),
-          TextCellValue("Qty"),
-          TextCellValue("Price"),
-          TextCellValue("Size"),
-          TextCellValue("Disc (%)"),
-          TextCellValue("Disc Nominal"),
-          TextCellValue("Note"),
-        ]);
+      // DATA UNTUK CHART
+      Map<String, int> dailySales = {}; // Line chart data
+      Map<String, int> categoryCount = {}; // Pie chart data
+      Map<String, int> menuCount = {}; // Bar chart data
+      // COLLECT FILTERED DATA DULU
+      List<Map<String, dynamic>> filteredData = [];
 
-        for (var doc in allDocs) {
-          final dataMap = doc.data();
+      for (var doc in allDocs) {
+        final dataMap = doc.data();
 
-          // PARSE CREATED_AT
-          DateTime createdAt;
-          final createdAtRaw = dataMap['created_at'];
-          if (createdAtRaw is Timestamp) {
-            createdAt = createdAtRaw.toDate();
-          } else if (createdAtRaw is String) {
-            createdAt = DateTime.tryParse(createdAtRaw) ?? DateTime.now();
-          } else {
-            createdAt = DateTime.now();
-          }
-
-          // PARSE END_TIME
-          DateTime? endTime;
-          final endRaw = dataMap['endTime'];
-          if (endRaw is Timestamp) {
-            endTime = endRaw.toDate();
-          } else if (endRaw is String) {
-            endTime = DateTime.tryParse(endRaw);
-          }
-
-          // FILTER DATE
-          if (createdAt.isBefore(startDate) || createdAt.isAfter(endDate)) continue;
-
-          // FILTER STATUS
-          final status = (dataMap['status'] ?? '').toString().toLowerCase();
-          if (selectedStatus.toLowerCase() != "all" &&
-              status != selectedStatus.toLowerCase()) {
-            continue;
-          }
-
-          final items = (dataMap['items'] as List?) ?? [];
-          
-          for (var item in items) {
-            final itemMap = item as Map<String, dynamic>? ?? {};
-
-            // ✅ DATA ROWS - WRAPPED IN CORRECT CellValue TYPES
-            sheet.appendRow([
-              TextCellValue(dataMap['order_id']?.toString() ?? '-'),
-              TextCellValue(dataMap['customer_name']?.toString() ?? '-'),
-              TextCellValue(dataMap['cashier']?.toString() ?? '-'),
-              TextCellValue(DateFormat('dd/MM/yyyy HH:mm').format(createdAt)),
-              TextCellValue(endTime != null ? DateFormat('dd/MM/yyyy HH:mm').format(endTime) : '-'),
-              TextCellValue(dataMap['payment']?.toString() ?? '-'),
-              TextCellValue(dataMap['status']?.toString() ?? '-'),
-              TextCellValue(dataMap['table']?.toString() ?? '-'),
-              IntCellValue(dataMap['total'] as int? ?? 0), // ✅ INTEGER
-              TextCellValue(dataMap['type']?.toString() ?? '-'),
-              TextCellValue(itemMap['name']?.toString() ?? '-'),
-              TextCellValue(itemMap['category']?.toString() ?? '-'),
-              IntCellValue(itemMap['qty'] as int? ?? 0), // ✅ INTEGER
-              IntCellValue(itemMap['price'] as int? ?? 0), // ✅ INTEGER
-              TextCellValue(itemMap['size']?.toString() ?? '-'),
-              TextCellValue(itemMap['disc']?.toString() ?? '0'),
-              TextCellValue(itemMap['discNominal']?.toString() ?? '0'),
-              TextCellValue(itemMap['noted']?.toString() ?? '-'),
-            ]);
-          }
+        // PARSE CREATED_AT
+        DateTime createdAt;
+        final createdAtRaw = dataMap['created_at'];
+        if (createdAtRaw is Timestamp) {
+          createdAt = createdAtRaw.toDate();
+        } else if (createdAtRaw is String) {
+          createdAt = DateTime.tryParse(createdAtRaw) ?? DateTime.now();
+        } else {
+          createdAt = DateTime.now();
         }
 
-        // SAVE EXCEL TO BLOB FOR DOWNLOAD
-        final fileBytes = excel.save();
-        if (fileBytes == null) return;
+        // PARSE END_TIME
+        DateTime? endTime;
+        final endRaw = dataMap['endTime'];
+        if (endRaw is Timestamp) {
+          endTime = endRaw.toDate();
+        } else if (endRaw is String) {
+          endTime = DateTime.tryParse(endRaw);
+        }
 
-        final fileName = "Daily_Report_${DateFormat('yyyyMMdd').format(startDate)}_${DateFormat('yyyyMMdd').format(endDate)}";
+        // FILTER DATE
+        if (createdAt.isBefore(startDate) || createdAt.isAfter(endDate)) continue;
 
-        if (kIsWeb) {
-          downloadExcelWeb(fileBytes, "$fileName.xlsx");
-        } else {
-          await downloadExcelMobile(fileBytes, fileName);
+        // FILTER STATUS
+        final status = (dataMap['status'] ?? '').toString().toLowerCase();
+        if (selectedStatus.toLowerCase() != "all" &&
+            status != selectedStatus.toLowerCase()) {
+          continue;
+        }
+
+        // Tambahkan ke list dengan createdAt untuk sorting nanti
+        filteredData.add({
+          'dataMap': dataMap,
+          'createdAt': createdAt,
+          'endTime': endTime,
+        });
+      }
+
+      // ✅ SORTING: DARI TERLAMA KE TERBARU (ASCENDING)
+      filteredData.sort((a, b) {
+        DateTime dateA = a['createdAt'] as DateTime;
+        DateTime dateB = b['createdAt'] as DateTime;
+        return dateA.compareTo(dateB); // Ascending = terlama dulu
+      });
+
+      // SEKARANG PROCESS DATA YANG SUDAH TERSORTIR
+      for (var filtered in filteredData) {
+        final dataMap = filtered['dataMap'] as Map<String, dynamic>;
+        final createdAt = filtered['createdAt'] as DateTime;
+        final endTime = filtered['endTime'] as DateTime?;
+
+        // COUNT DAILY SALES (untuk line chart)
+        String dateKey = DateFormat('dd/MM/yyyy').format(createdAt);
+        dailySales[dateKey] = (dailySales[dateKey] ?? 0) + 1;
+
+        final items = (dataMap['items'] as List?) ?? [];
+
+        for (var item in items) {
+          final itemMap = item as Map<String, dynamic>? ?? {};
+
+          // COUNT CATEGORY (untuk pie chart)
+          final categories = itemMap['category'] as List<dynamic>?;
+          final cat = categories != null && categories.isNotEmpty
+              ? categories.first.toString()
+              : "Uncategorized";
+          int qty = itemMap['qty'] as int? ?? 0;
+          categoryCount[cat] = (categoryCount[cat] ?? 0) + qty;
+
+          // COUNT MENU (untuk bar chart)
+          final menuName = itemMap['name']?.toString() ?? 'Unknown';
+          menuCount[menuName] = (menuCount[menuName] ?? 0) + qty;
+
+          // APPEND ROW DATA
+          sheet.appendRow([
+            TextCellValue(dataMap['order_id']?.toString() ?? '-'),
+            TextCellValue(dataMap['customer_name']?.toString() ?? '-'),
+            TextCellValue(dataMap['cashier']?.toString() ?? '-'),
+            TextCellValue(DateFormat('dd/MM/yyyy HH:mm').format(createdAt)),
+            TextCellValue(endTime != null ? DateFormat('dd/MM/yyyy HH:mm').format(endTime) : '-'),
+            TextCellValue(dataMap['payment']?.toString() ?? '-'),
+            TextCellValue(dataMap['status']?.toString() ?? '-'),
+            TextCellValue(dataMap['table']?.toString() ?? '-'),
+            IntCellValue(dataMap['total'] as int? ?? 0),
+            TextCellValue(dataMap['type']?.toString() ?? '-'),
+            TextCellValue(itemMap['name']?.toString() ?? '-'),
+            TextCellValue(cat),
+            IntCellValue(qty),
+            IntCellValue(itemMap['price'] as int? ?? 0),
+            TextCellValue(itemMap['size']?.toString() ?? '-'),
+            TextCellValue(itemMap['disc']?.toString() ?? '0'),
+            TextCellValue(itemMap['discNominal']?.toString() ?? '0'),
+            TextCellValue(itemMap['noted']?.toString() ?? '-'),
+          ]);
         }
       }
 
+      // ========== SHEET 2: LINE CHART DATA (Daily Sales) ==========
+      final lineSheet = excel['Chart - Daily Sales'];
+      lineSheet.appendRow([
+        TextCellValue("Date"),
+        TextCellValue("Total Orders"),
+      ]);
+
+      // Sort by date
+      final sortedDailySales = dailySales.entries.toList()
+        ..sort((a, b) {
+          try {
+            final dateA = DateFormat('dd/MM/yyyy').parse(a.key);
+            final dateB = DateFormat('dd/MM/yyyy').parse(b.key);
+            return dateA.compareTo(dateB);
+          } catch (e) {
+            return 0;
+          }
+        });
+
+      for (var entry in sortedDailySales) {
+        lineSheet.appendRow([
+          TextCellValue(entry.key),
+          IntCellValue(entry.value),
+        ]);
+      }
+
+      // TUTORIAL LINE CHART
+      final lineRowCount = sortedDailySales.length + 1;
+      lineSheet.appendRow([TextCellValue("")]);
+      lineSheet.appendRow([TextCellValue("")]);
+      lineSheet.appendRow([TextCellValue("📊 CARA MEMBUAT LINE CHART (Grafik Garis Penjualan Harian):")]);
+      lineSheet.appendRow([TextCellValue("")]);
+      lineSheet.appendRow([TextCellValue("Langkah 1: Select/Blok data dari cell A1 sampai B$lineRowCount")]);
+      lineSheet.appendRow([TextCellValue("Langkah 2: Klik tab 'Insert' di menu atas Excel")]);
+      lineSheet.appendRow([TextCellValue("Langkah 3: Pilih 'Line Chart' atau 'Line with Markers'")]);
+      lineSheet.appendRow([TextCellValue("Langkah 4: Chart akan otomatis muncul!")]);
+      lineSheet.appendRow([TextCellValue("")]);
+      lineSheet.appendRow([TextCellValue("💡 Tips: Klik chart → Chart Design → Add Chart Element untuk menambah judul")]);
+
+      // ========== SHEET 3: PIE CHART DATA (Category Sales) ==========
+      final pieSheet = excel['Chart - Category'];
+      pieSheet.appendRow([
+        TextCellValue("Category"),
+        TextCellValue("Total Sold"),
+      ]);
+
+      for (var entry in categoryCount.entries) {
+        pieSheet.appendRow([
+          TextCellValue(entry.key),
+          IntCellValue(entry.value),
+        ]);
+      }
+
+      // TUTORIAL PIE CHART
+      final pieRowCount = categoryCount.length + 1;
+      pieSheet.appendRow([TextCellValue("")]);
+      pieSheet.appendRow([TextCellValue("")]);
+      pieSheet.appendRow([TextCellValue("🥧 CARA MEMBUAT PIE CHART (Grafik Lingkaran Kategori):")]);
+      pieSheet.appendRow([TextCellValue("")]);
+      pieSheet.appendRow([TextCellValue("Langkah 1: Select/Blok data dari cell A1 sampai B$pieRowCount")]);
+      pieSheet.appendRow([TextCellValue("Langkah 2: Klik tab 'Insert' di menu atas Excel")]);
+      pieSheet.appendRow([TextCellValue("Langkah 3: Pilih 'Pie Chart' → pilih jenis yang disukai (2D atau 3D)")]);
+      pieSheet.appendRow([TextCellValue("Langkah 4: Chart akan otomatis muncul dengan persentase!")]);
+      pieSheet.appendRow([TextCellValue("")]);
+      pieSheet.appendRow([TextCellValue("💡 Tips: Klik chart → klik kanan → Add Data Labels untuk tampilkan angka")]);
+
+      // ========== SHEET 4: BAR CHART DATA (Top 5 Menu) ==========
+      final barSheet = excel['Chart - Top 5 Menu'];
+      barSheet.appendRow([
+        TextCellValue("Menu Name"),
+        TextCellValue("Total Sold"),
+      ]);
+
+      // Sort and take top 5
+      final sortedMenu = menuCount.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value));
+      
+      final top5 = sortedMenu.take(5);
+
+      for (var entry in top5) {
+        barSheet.appendRow([
+          TextCellValue(entry.key),
+          IntCellValue(entry.value),
+        ]);
+      }
+
+      // TUTORIAL BAR CHART
+      final top5Count = top5.length + 1;
+      barSheet.appendRow([TextCellValue("")]);
+      barSheet.appendRow([TextCellValue("")]);
+      barSheet.appendRow([TextCellValue("📊 CARA MEMBUAT BAR CHART (Grafik Batang Top 5 Menu):")]);
+      barSheet.appendRow([TextCellValue("")]);
+      barSheet.appendRow([TextCellValue("Langkah 1: Select/Blok data dari cell A1 sampai B$top5Count")]);
+      barSheet.appendRow([TextCellValue("Langkah 2: Klik tab 'Insert' di menu atas Excel")]);
+      barSheet.appendRow([TextCellValue("Langkah 3: Pilih 'Bar Chart' (horizontal) atau 'Column Chart' (vertikal)")]);
+      barSheet.appendRow([TextCellValue("Langkah 4: Chart akan otomatis muncul!")]);
+      barSheet.appendRow([TextCellValue("")]);
+      barSheet.appendRow([TextCellValue("💡 Tips: Pilih 'Column Chart' agar lebih mudah dibaca")]);
+
+      // ========== SHEET 5: PANDUAN LENGKAP ==========
+      final guideSheet = excel['📖 Panduan Lengkap'];
+      
+      guideSheet.appendRow([TextCellValue("═══════════════════════════════════════════════════════════")]);
+      guideSheet.appendRow([TextCellValue("📊 PANDUAN LENGKAP MEMBUAT CHART DI EXCEL")]);
+      guideSheet.appendRow([TextCellValue("═══════════════════════════════════════════════════════════")]);
+      guideSheet.appendRow([TextCellValue("")]);
+      
+      guideSheet.appendRow([TextCellValue("📌 ISI FILE EXCEL INI:")]);
+      guideSheet.appendRow([TextCellValue("")]);
+      guideSheet.appendRow([TextCellValue("✅ Sheet 1: Daily Report - Data transaksi lengkap")]);
+      guideSheet.appendRow([TextCellValue("✅ Sheet 2: Chart - Daily Sales - Data untuk grafik penjualan harian")]);
+      guideSheet.appendRow([TextCellValue("✅ Sheet 3: Chart - Category - Data untuk grafik kategori")]);
+      guideSheet.appendRow([TextCellValue("✅ Sheet 4: Chart - Top 5 Menu - Data untuk grafik menu terlaris")]);
+      guideSheet.appendRow([TextCellValue("✅ Sheet 5: Panduan Lengkap (sheet ini)")]);
+      guideSheet.appendRow([TextCellValue("")]);
+      guideSheet.appendRow([TextCellValue("")]);
+
+      guideSheet.appendRow([TextCellValue("🎯 CARA CEPAT MEMBUAT CHART:")]);
+      guideSheet.appendRow([TextCellValue("")]);
+      guideSheet.appendRow([TextCellValue("1️⃣ Buka sheet yang ingin dibuat chartnya")]);
+      guideSheet.appendRow([TextCellValue("2️⃣ Blok/Select semua data (dari kolom header sampai data terakhir)")]);
+      guideSheet.appendRow([TextCellValue("3️⃣ Tekan tombol F11 untuk instant chart! (atau Insert → Chart)")]);
+      guideSheet.appendRow([TextCellValue("4️⃣ Selesai! Chart otomatis terbuat")]);
+      guideSheet.appendRow([TextCellValue("")]);
+      guideSheet.appendRow([TextCellValue("")]);
+
+      guideSheet.appendRow([TextCellValue("🔥 SHORTCUT KEYBOARD BERGUNA:")]);
+      guideSheet.appendRow([TextCellValue("")]);
+      guideSheet.appendRow([TextCellValue("• F11 = Buat chart instant dari data yang diblok")]);
+      guideSheet.appendRow([TextCellValue("• Ctrl + A = Select semua data di sheet")]);
+      guideSheet.appendRow([TextCellValue("• Alt + F1 = Buat embedded chart di sheet yang sama")]);
+      guideSheet.appendRow([TextCellValue("")]);
+      guideSheet.appendRow([TextCellValue("")]);
+
+      guideSheet.appendRow([TextCellValue("💡 TIPS PRO:")]);
+      guideSheet.appendRow([TextCellValue("")]);
+      guideSheet.appendRow([TextCellValue("✨ Gunakan 'Recommended Charts' kalau bingung pilih jenis chart")]);
+      guideSheet.appendRow([TextCellValue("✨ Klik kanan chart → Change Chart Type untuk ganti jenis")]);
+      guideSheet.appendRow([TextCellValue("✨ Tambah Data Labels agar angka terlihat di chart")]);
+      guideSheet.appendRow([TextCellValue("✨ Gunakan Chart Styles untuk tampilan yang lebih menarik")]);
+      guideSheet.appendRow([TextCellValue("")]);
+      guideSheet.appendRow([TextCellValue("")]);
+
+      guideSheet.appendRow([TextCellValue("📱 UNTUK EXCEL DI SMARTPHONE:")]);
+      guideSheet.appendRow([TextCellValue("")]);
+      guideSheet.appendRow([TextCellValue("1. Buka file Excel di aplikasi Microsoft Excel")]);
+      guideSheet.appendRow([TextCellValue("2. Pilih sheet chart yang ingin dibuat")]);
+      guideSheet.appendRow([TextCellValue("3. Tap dan drag untuk select data")]);
+      guideSheet.appendRow([TextCellValue("4. Tap icon '+' → Insert → Charts")]);
+      guideSheet.appendRow([TextCellValue("5. Pilih jenis chart yang diinginkan")]);
+      guideSheet.appendRow([TextCellValue("")]);
+      guideSheet.appendRow([TextCellValue("")]);
+
+      guideSheet.appendRow([TextCellValue("❓ JENIS-JENIS CHART:")]);
+      guideSheet.appendRow([TextCellValue("")]);
+      guideSheet.appendRow([TextCellValue("📈 Line Chart = Untuk melihat tren/perubahan dari waktu ke waktu")]);
+      guideSheet.appendRow([TextCellValue("🥧 Pie Chart = Untuk melihat proporsi/perbandingan bagian dari keseluruhan")]);
+      guideSheet.appendRow([TextCellValue("📊 Bar/Column Chart = Untuk membandingkan nilai antar kategori")]);
+      guideSheet.appendRow([TextCellValue("")]);
+      guideSheet.appendRow([TextCellValue("")]);
+
+      guideSheet.appendRow([TextCellValue("═══════════════════════════════════════════════════════════")]);
+      guideSheet.appendRow([TextCellValue("✅ Selamat mencoba! Data sudah siap untuk divisualisasikan!")]);
+      guideSheet.appendRow([TextCellValue("═══════════════════════════════════════════════════════════")]);
+
+      // SAVE EXCEL
+      final fileBytes = excel.save();
+      if (fileBytes == null) return;
+
+      final fileName = "Daily_Report_${DateFormat('yyyyMMdd').format(startDate)}_${DateFormat('yyyyMMdd').format(endDate)}";
+
+      if (kIsWeb) {
+        downloadExcelWeb(fileBytes, "$fileName.xlsx");
+      } else {
+        await downloadExcelMobile(fileBytes, fileName);
+      }
+    }
         Future<void> _pickDateRange() async {
         final picked = await showDateRangePicker(
           context: context,
@@ -539,10 +885,14 @@ Widget _detailRow(String label, dynamic value) {
                             children: allCategoryKeys.map((cat) {
                               return SizedBox(
                                 width: 180,
-                                child: _buildAnimatedBox(
-                                  cat,
-                                  categoryCount[cat] ?? 0,
-                                  Colors.amber.shade700,
+                                child: InkWell(
+                                  onTap: () => _showCategoryDetail(cat, filteredDocs),
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: _buildAnimatedBox(
+                                    cat,
+                                    categoryCount[cat] ?? 0,
+                                    Colors.amber.shade700,
+                                  ),
                                 ),
                               );
                             }).toList(),
