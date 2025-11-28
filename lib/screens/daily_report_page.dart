@@ -427,6 +427,8 @@ Widget _detailRow(String label, dynamic value) {
 
         final items = (dataMap['items'] as List?) ?? [];
 
+        final int startRow = sheet.maxRows + 1;
+
         for (var item in items) {
           final itemMap = item as Map<String, dynamic>? ?? {};
 
@@ -452,7 +454,7 @@ Widget _detailRow(String label, dynamic value) {
             TextCellValue(dataMap['payment']?.toString() ?? '-'),
             TextCellValue(dataMap['status']?.toString() ?? '-'),
             TextCellValue(dataMap['table']?.toString() ?? '-'),
-            IntCellValue(dataMap['total'] as int? ?? 0),
+            IntCellValue(0),
             TextCellValue(dataMap['type']?.toString() ?? '-'),
             TextCellValue(itemMap['name']?.toString() ?? '-'),
             TextCellValue(cat),
@@ -464,6 +466,20 @@ Widget _detailRow(String label, dynamic value) {
             TextCellValue(itemMap['noted']?.toString() ?? '-'),
           ]);
         }
+        final int endRow = sheet.maxRows;
+
+        if (endRow > startRow) {
+          // Kolom TOTAL ada di kolom ke-9 → berarti kolom I
+          sheet.merge(
+            CellIndex.indexByString('I$startRow'),
+            CellIndex.indexByString('I$endRow'),
+          );
+        }
+
+        sheet
+        .cell(CellIndex.indexByString('I$startRow'))
+        .value = IntCellValue(dataMap['total'] as int? ?? 0);
+
       }
 
       // ========== SHEET 2: LINE CHART DATA (Daily Sales) ==========
