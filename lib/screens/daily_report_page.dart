@@ -901,13 +901,42 @@ Widget _detailRow(String label, dynamic value) {
                             children: allCategoryKeys.map((cat) {
                               return SizedBox(
                                 width: 180,
-                                child: InkWell(
+                                child: GestureDetector( // ✅ Ganti InkWell dengan GestureDetector
                                   onTap: () => _showCategoryDetail(cat, filteredDocs),
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: _buildAnimatedBox(
-                                    cat,
-                                    categoryCount[cat] ?? 0,
-                                    Colors.amber.shade700,
+                                  child: Container( // ✅ Tambahkan Container wrapper
+                                    decoration: BoxDecoration(
+                                      color: Colors.amber.shade700,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    height: 80,
+                                    child: Center(
+                                      child: TweenAnimationBuilder<int>(
+                                        tween: IntTween(begin: 0, end: categoryCount[cat] ?? 0),
+                                        duration: const Duration(seconds: 1),
+                                        builder: (context, value, child) {
+                                          return Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                value.toString().padLeft(3, '0'),
+                                                style: const TextStyle(
+                                                  fontSize: 28,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              Text(
+                                                cat,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                    ),
                                   ),
                                 ),
                               );
